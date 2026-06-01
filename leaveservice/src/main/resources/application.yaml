@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: leaveservice
+
+  datasource:
+    url: jdbc:mysql://mysql:3306/leave_management?createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8083
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone:
+        http://eurekaserver:8761/eureka
+
+feign:
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  retry:
+    instances:
+      employeeservice:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+  circuitbreaker:
+  instances:
+    employeeservice:
+      failure-rate-threshold: 50
+      minimum-number-of-calls: 5
+      sliding-window-size: 10
+      wait-duration-in-open-state: 10s
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint:
+        http://zipkin:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakers,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [traceId=%X{traceId}, spanId=%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"
+
+

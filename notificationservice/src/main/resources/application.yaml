@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: notificationservice
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8084
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone:
+        http://eurekaserver:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint:
+        http://zipkin:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [traceId=%X{traceId}, spanId=%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"

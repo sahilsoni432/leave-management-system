@@ -1,0 +1,119 @@
+spring:
+  main:
+    web-application-type: reactive
+
+  application:
+    name: apigateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://AUTHSERVICE
+          predicates:
+            - Path=/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: auth-service-cb
+                fallbackUri: forward:/fallback/auth-service
+
+        - id: employee-service
+          uri: lb://EMPLOYEESERVICE
+          predicates:
+            - Path=/employees/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: employee-service-cb
+                fallbackUri: forward:/fallback/employee-service
+
+        - id: leave-service
+          uri: lb://LEAVESERVICE
+          predicates:
+            - Path=/leaves/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: leave-service-cb
+                fallbackUri: forward:/fallback/leave-service
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      auth-service-cb:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 3
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+
+      employee-service-cb:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 3
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+
+      leave-service-cb:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 3
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+
+  timelimiter:
+    instances:
+      auth-service-cb:
+        timeout-duration: 10s
+
+      employee-service-cb:
+        timeout-duration: 10s
+
+      leave-service-cb:
+        timeout-duration: 10s
+
+server:
+  port: 8080
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    service-url:
+      defaultZone:
+        http://eurekaserver:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint:
+        http://zipkin:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakers,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [traceId=%X{traceId}, spanId=%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    io.github.resilience4j: DEBUG
+
+jwt:
+  secret-key: niKiMBe9BlaU75psRg5T8zGZzR6lXMDoSujmWl4tBfL
