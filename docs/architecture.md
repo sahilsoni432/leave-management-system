@@ -73,6 +73,29 @@ All incoming requests are routed through API Gateway which acts as a centralized
                                          +----------------------+
                                          | Notification Service |
                                          +----------------------+
+
+                  Centralized Logging & Monitoring (ELK Stack)
+ 
++------------------+      Logs      +-----------+
+| API Gateway      | -------------> |           |
+| Auth Service     | -------------> |           |
+| Employee Service | -------------> | Filebeat  |
+| Leave Service    | -------------> |           |
+| NotificationSvc  | -------------> |           |
++------------------+                +-----------+
+                                           |
+                                           v
+                                    +-------------+
+                                    | Elasticsearch|
+                                    +-------------+
+                                           |
+                                           v
+                                      +---------+
+                                      | Kibana  |
+                                      +---------+
+ 
+Log Flow:
+Microservices → Filebeat → Elasticsearch → Kibana
  
 Events Published:
 - Leave Applied
@@ -565,17 +588,50 @@ Benefits:
  
 - Zipkin
 - Distributed Tracing
+- Elasticsearch
+- Kibana
+- Filebeat
+- Centralized Logging
  
 ### Build & Deployment
  
 - Maven
 - Docker
+- Docker Compose
+- Docker Hub Images
+- ELK Stack Containers
+  - Elasticsearch
+  - Kibana
+  - Filebeat
  
 ---
  
+## Logging & Monitoring
+ 
+The system uses ELK Stack for centralized logging and monitoring.
+ 
+Components:
+ 
+### Filebeat
+Collects logs from all microservices and forwards them to Elasticsearch.
+ 
+### Elasticsearch
+Stores and indexes application logs for efficient searching and analysis.
+ 
+### Kibana
+Provides visualization dashboards and log exploration capabilities.
+ 
+Benefits:
+ 
+- Centralized log management
+- Faster debugging
+- Production monitoring
+- Log searching and filtering
+- Service health analysis
+
 ## Conclusion
  
-The Leave Management System follows a scalable and maintainable microservices architecture. Authentication is centralized through Auth Service, request validation is handled by API Gateway, service communication is implemented using OpenFeign and Eureka, while resilience and observability are achieved using Resilience4j and Zipkin.
+The Leave Management System follows a scalable and maintainable microservices architecture. Authentication is centralized through Auth Service, request validation is handled by API Gateway, service communication is implemented using OpenFeign and Eureka, while resilience and observability are achieved using Resilience4j, Zipkin and ELK Stack (Elasticsearch, Kibana, Filebeat).
  
-This architecture enables independent deployment, scalability, fault tolerance and secure communication between services.
+This architecture enables independent deployment, scalability, fault tolerance, secure communication between services and centralized log monitoring.
  
