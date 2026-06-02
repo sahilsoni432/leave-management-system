@@ -15,6 +15,13 @@ services:
       volumes:
         - mysql-data:/var/lib/mysql
 
+      healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -24,12 +31,25 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
     ports:
       - "9411:9411"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9411/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
 
   eurekaserver:
     image: sahilsoni234/eurekaserver:latest
@@ -38,6 +58,18 @@ services:
 
     ports:
       - "8761:8761"
+
+    environment:
+      # Override localhost → container hostname so other services can reach it
+      EUREKA_INSTANCE_HOSTNAME: eurekaserver
+
+    healthcheck:
+      # Eureka dashboard returns 200 when fully started
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/eureka/apps || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
 
   apigateway:
     image: sahilsoni234/apigateway:latest
@@ -51,8 +83,18 @@ services:
       - "8080:8080"
 
     depends_on:
-      - eurekaserver
-      - zipkin
+      eurekaserver:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
 
   authservice:
     image: sahilsoni234/authservice:latest
@@ -68,9 +110,20 @@ services:
       - "8081:8081"
 
     depends_on:
-      - mysql
-      - eurekaserver
-      - zipkin
+      mysql:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
 
   employeeservice:
     image: sahilsoni234/employeeservice:latest
@@ -86,9 +139,20 @@ services:
       - "8082:8082"
 
     depends_on:
-      - mysql
-      - eurekaserver
-      - zipkin
+      mysql:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
 
   leaveservice:
     image: sahilsoni234/leaveservice:latest
@@ -108,10 +172,22 @@ services:
       - "8083:8083"
 
     depends_on:
-      - mysql
-      - eurekaserver
-      - rabbitmq
-      - zipkin
+      mysql:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8083/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
 
   notificationservice:
     image: sahilsoni234/notificationservice:latest
@@ -122,9 +198,12 @@ services:
       - "8084:8084"
 
     depends_on:
-      - rabbitmq
-      - eurekaserver
-      - zipkin
+      rabbitmq:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
 
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -132,7 +211,13 @@ services:
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
 
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: on-failure
 
 volumes:
   mysql-data:
