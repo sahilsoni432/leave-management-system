@@ -16,11 +16,11 @@ services:
         - mysql-data:/var/lib/mysql
 
       healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+        start_period: 30s
 
   rabbitmq:
     image: rabbitmq:3-management
