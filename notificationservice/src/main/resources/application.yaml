@@ -14,7 +14,7 @@ server:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
-    prefer-ip-address: true nb
+    prefer-ip-address: true
   client:
     service-url:
       defaultZone:
