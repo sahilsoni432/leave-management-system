@@ -30,7 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
         if(path.contains("/auth/login")
                 || path.contains("/swagger-ui")
                 || path.contains("/v3/api-docs")
-                || path.contains("/swagger-resources"))
+                || path.contains("/swagger-resources")
+                || path.contains("/actuator"))
         {
             filterChain.doFilter(request, response);
             return;
