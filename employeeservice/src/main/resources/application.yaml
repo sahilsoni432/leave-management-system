@@ -73,5 +73,7 @@ resilience4j:
       wait-duration-in-open-state: 10s
 
 logging:
+  file:
+    name: logs/employeeservice.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [traceId=%X{traceId}, spanId=%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"

@@ -1,0 +1,35 @@
+filebeat.inputs:
+  - type: container
+    paths:
+      - /var/lib/docker/containers/*/*.log
+
+  - type: filestream
+    id: leaveservice-logs
+    paths:
+      - /logs/leaveservice/leaveservice.log
+
+  - type: filestream
+    id: employeeservice-logs
+    paths:
+      - /logs/employeeservice/employeeservice.log
+
+  - type: filestream
+    id: apigateway-logs
+    paths:
+      - /logs/apigateway/apigateway.log
+
+  - type: filestream
+    id: authservice-logs
+    paths:
+      - /logs/authservice/authservice.log
+
+  - type: filestream
+    id: notificationservice-logs
+    paths:
+      - /logs/notificationservice/notificationservice.log
+ 
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+ 
+setup.kibana:
+  host: "kibana:5601"

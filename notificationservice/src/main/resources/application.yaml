@@ -14,7 +14,7 @@ server:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
-    prefer-ip-address: true
+    prefer-ip-address: true nb
   client:
     service-url:
       defaultZone:
@@ -37,5 +37,7 @@ management:
       show-details: always
 
 logging:
+  file:
+    name: logs/notificationservice.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [traceId=%X{traceId}, spanId=%X{spanId}] [%thread] %-5level %logger{36} - %msg%n"

@@ -1,13 +1,16 @@
 # Maven
 target/
-
+ 
 # IntelliJ
 .idea/
 *.iml
-
+ 
 # Logs
-*.Logs
-
+logs/
+**/logs/
+*.log
+hs_err_pid*
+ 
 # OS files
 .DS_Store
 Thumbs.db
