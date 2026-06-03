@@ -38,7 +38,14 @@ POST /auth/login
  
 ```json
 {
-  "email": "john.doe@company.com",
+  "email": "employee@test.com",
+  "password": "password123"
+}
+```
+
+```json
+{
+  "email": "manager@test.com",
   "password": "password123"
 }
 ```
@@ -48,8 +55,38 @@ POST /auth/login
 ```json
 {
   "token": "jwt-token",
+  "role": "ROLE_EMPLOYEE",
+  "userId": 2
+}
+```
+
+```json
+{
+  "token": "jwt-token",
+  "role": "ROLE_MANAGER",
+  "userId": 1
+}
+```
+
+### Decoded JWT response  
+ 
+```json
+{
+  "userId": 2,
+  "role": "ROLE_EMPLOYEE",
+  "employeeId": 2,
+  "iat": 1780507007,
+  "exp": 1780593407
+}
+```
+
+```json
+{
+  "userId": 1,
+  "role": "ROLE_MANAGER",
   "employeeId": 1,
-  "role": "ROLE_EMPLOYEE"
+  "iat": 1780508130,
+  "exp": 1780594530
 }
 ```
  
@@ -97,9 +134,9 @@ POST /employees/create
 {
   "name": "John Doe",
   "email": "john.doe@company.com",
-  "password": "password123",
+  "userId": "101",
   "role": "ROLE_EMPLOYEE",
-  "managerId": 2
+  "managerId": 1
 }
 ```
  
@@ -107,9 +144,12 @@ POST /employees/create
  
 ```json
 {
-  "employeeId": 1,
+  "id": 1,
+  "userId": "101",
   "name": "John Doe",
-  "email": "john.doe@company.com"
+  "email": "john.doe@company.com",
+  "role": "ROLE_EMPLOYEE",
+  "managerId": 1
 }
 ```
  
@@ -135,9 +175,16 @@ ROLE_EMPLOYEE
  
 ```json
 {
-  "casualLeaves": 10,
-  "sickLeaves": 8,
-  "remainingLeaves": 18
+    "employeeId": 2,
+    "casualAllocated": 12,
+    "casualUsed": 0,
+    "casualRemaining": 12,
+    "sickAllocated": 10,
+    "sickUsed": 0,
+    "sickRemaining": 10,
+    "privilegeAllocated": 15,
+    "privilegeUsed": 0,
+    "privilegeRemaining": 15
 }
 ```
  
@@ -157,9 +204,16 @@ GET /employees/{employeeId}/leave-balance
  
 ```json
 {
-  "casualLeaves": 10,
-  "sickLeaves": 8,
-  "remainingLeaves": 18
+    "employeeId": 2,
+    "casualAllocated": 12,
+    "casualUsed": 0,
+    "casualRemaining": 12,
+    "sickAllocated": 10,
+    "sickUsed": 0,
+    "sickRemaining": 10,
+    "privilegeAllocated": 15,
+    "privilegeUsed": 0,
+    "privilegeRemaining": 15
 }
 ```
  
@@ -207,9 +261,8 @@ GET /employees/auth/{userId}
  
 ```json
 {
-  "employeeId": 1,
-  "email": "john.doe@company.com",
-  "password": "encrypted-password",
+  "employeeId": 2,
+  "userId": 2,
   "role": "ROLE_EMPLOYEE"
 }
 ```
@@ -232,7 +285,7 @@ GET /employees/{employeeId}
 {
   "employeeId": 1,
   "employeeName": "John Doe",
-  "email": "john.doe@company.com",
+  "employeeEmail": "john.doe@company.com",
   "managerId": 2,
   "role": "ROLE_EMPLOYEE"
 }
@@ -268,10 +321,12 @@ ROLE_EMPLOYEE
  
 ```json
 {
-  "leaveType": "CASUAL",
-  "startDate": "2026-06-01",
-  "endDate": "2026-06-03",
-  "reason": "Personal Work"
+    "managerId": 1,
+    "leaveType": "CASUAL",
+    "startDate": "2026-06-20",
+    "endDate": "2026-06-21",
+    "numberOfDays": 3,
+    "reason": "Family Function"
 }
 ```
  
@@ -279,8 +334,17 @@ ROLE_EMPLOYEE
  
 ```json
 {
-  "leaveId": 101,
-  "status": "PENDING"
+    "id": 1,
+    "employeeId": 2,
+    "managerId": 1,
+    "leaveType": "CASUAL",
+    "startDate": "2026-06-20",
+    "endDate": "2026-06-21",
+    "numberOfDays": 3,
+    "reason": "Family Function",
+    "status": "PENDING",
+    "appliedDate": "2026-06-03",
+    "rejectionReason": null
 }
 ```
  
@@ -293,13 +357,36 @@ Returns all pending leave requests assigned to manager.
 ### Endpoint
  
 ```http
-GET /leaves/manager
+GET /leaves/manager?status=ALL&employeeId=2&fromDate=2026-06-01&toDate=2026-06-30
 ```
  
 ### Authorization
  
 ```text
 ROLE_MANAGER
+```
+ 
+---
+
+### Response
+ 
+```json
+[
+    {
+        "leaveId": 1,
+        "employeeId": 2,
+        "employeeName": "Test Employee",
+        "employeeEmail": "employee@test.com",
+        "leaveType": "CASUAL",
+        "status": "PENDING",
+        "startDate": "2026-06-20",
+        "endDate": "2026-06-21",
+        "appliedDate": "2026-06-03",
+        "numberOfDays": 3,
+        "reason": "Family Function",
+        "rejectionReason": null
+    }
+]
 ```
  
 ---
@@ -324,8 +411,17 @@ ROLE_MANAGER
  
 ```json
 {
-  "leaveId": 101,
-  "status": "APPROVED"
+    "id": 1,
+    "employeeId": 2,
+    "managerId": 1,
+    "leaveType": "CASUAL",
+    "startDate": "2026-06-20",
+    "endDate": "2026-06-21",
+    "numberOfDays": 3,
+    "reason": "Family Function",
+    "status": "APPROVED",
+    "appliedDate": "2026-06-03",
+    "rejectionReason": null
 }
 ```
  
@@ -351,8 +447,17 @@ ROLE_MANAGER
  
 ```json
 {
-  "leaveId": 101,
-  "status": "REJECTED"
+    "id": 2,
+    "employeeId": 2,
+    "managerId": 1,
+    "leaveType": "SICK",
+    "startDate": "2026-06-22",
+    "endDate": "2026-06-23",
+    "numberOfDays": 1,
+    "reason": "Suffering from fever",
+    "status": "REJECTED",
+    "appliedDate": "2026-06-03",
+    "rejectionReason": "Insufficient"
 }
 ```
  
@@ -365,7 +470,7 @@ Returns leave history of logged-in employee.
 ### Endpoint
  
 ```http
-GET /leaves/my-leave-history
+GET /leaves/my-leave-history?status=ALL&leaveType=ALL&fromDate=2026-06-01&toDate=2026-06-30&page=0&size=10
 ```
  
 ### Authorization
@@ -378,12 +483,51 @@ ROLE_EMPLOYEE
  
 ```json
 {
-  "content": [
-    {
-      "leaveId": 101,
-      "status": "APPROVED"
-    }
-  ]
+    "content": [
+        {
+            "id": 1,
+            "employeeId": 2,
+            "managerId": 1,
+            "leaveType": "CASUAL",
+            "startDate": "2026-06-20",
+            "endDate": "2026-06-21",
+            "numberOfDays": 3,
+            "reason": "Family Function",
+            "status": "APPROVED",
+            "appliedDate": "2026-06-03",
+            "rejectionReason": null
+        },
+        {
+            "id": 2,
+            "employeeId": 2,
+            "managerId": 1,
+            "leaveType": "SICK",
+            "startDate": "2026-06-22",
+            "endDate": "2026-06-23",
+            "numberOfDays": 1,
+            "reason": "Suffering from fever",
+            "status": "REJECTED",
+            "appliedDate": "2026-06-03",
+            "rejectionReason": "\"May be next time\""
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 10,
+        "sort": [],
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "totalPages": 1,
+    "totalElements": 2,
+    "last": true,
+    "first": true,
+    "numberOfElements": 2,
+    "size": 10,
+    "number": 0,
+    "sort": [],
+    "empty": false
 }
 ```
  

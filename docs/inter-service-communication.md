@@ -215,7 +215,7 @@ Leave Service checks:
  
 - Casual Leave Balance
 - Sick Leave Balance
-- Earned Leave Balance
+- Privilege Leave Balance
  
 If sufficient balance exists:
  
@@ -223,7 +223,7 @@ Leave application proceeds.
  
 Otherwise:
  
-Request is rejected.
+Failed.
  
 ---
  
@@ -361,7 +361,7 @@ Notification Consumer
 Notification Service
         |
         v
-Email Notification
+Email Notification / Logs
  
 ---
  
@@ -412,7 +412,7 @@ RabbitMQ
 Notification Service
     |
     v
-Email Sent
+Email Sent / Logs
  
 ---
  
@@ -437,7 +437,7 @@ RabbitMQ
 Notification Service
     |
     v
-Approval Email Sent
+Approval Email Sent / Logs
  
 ---
  
@@ -458,7 +458,7 @@ RabbitMQ
 Notification Service
     |
     v
-Rejection Email Sent
+Rejection Email Sent / Logs
  
 ---
  
