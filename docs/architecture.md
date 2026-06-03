@@ -78,7 +78,7 @@ Events Published:
  
 All microservices register themselves with Eureka Server.
 API Gateway routes requests using service discovery.
-Employee Service is invoked by Leave Service using OpenFeign.
+Employee Service is invoked by Auth Service and Leave Service using OpenFeign.
 Notification events are published to RabbitMQ and consumed asynchronously by Notification Service.
  
 ## System Components
@@ -87,7 +87,7 @@ Notification events are published to RabbitMQ and consumed asynchronously by Not
  
 Eureka Server acts as the Service Registry of the system.
  
-Responsibilities:
+**Responsibilities:**
  
 - Service Registration
 - Service Discovery
@@ -96,7 +96,7 @@ Responsibilities:
  
 Every microservice registers itself with Eureka during startup and becomes discoverable by other services.
  
-Benefits:
+**Benefits:**
  
 - Eliminates hardcoded service URLs
 - Enables dynamic scaling
@@ -108,7 +108,7 @@ Benefits:
  
 API Gateway serves as the single entry point for all incoming client requests.
  
-Responsibilities:
+**Responsibilities:**
  
 - Request Routing
 - JWT Validation
@@ -127,7 +127,7 @@ The gateway validates incoming JWT tokens and extracts user information required
  
 Auth Service is responsible for authentication and JWT token generation.
  
-Responsibilities:
+**Responsibilities:**
  
 - User Authentication
 - JWT Generation
@@ -142,7 +142,7 @@ During login, Auth Service fetches employee details from Employee Service and ge
  
 Employee Service manages employee information and leave balances.
  
-Responsibilities:
+**Responsibilities:**
  
 - Employee Creation
 - Employee Information Management
@@ -150,15 +150,15 @@ Responsibilities:
 - Role Validation
 - Employee Authorization Information
  
-The service also exposes internal APIs consumed by Auth Service.
+The service exposes internal APIs consumed by Auth Service and Leave Service.
  
 ---
  
 ### 5. Leave Service
  
-Leave Service handles leave related business operations.
+Leave Service handles leave-related business operations.
  
-Responsibilities:
+**Responsibilities:**
  
 - Leave Request Processing
 - Leave Approval Workflow
@@ -171,9 +171,9 @@ This service can be independently scaled based on leave processing load.
  
 ### 6. Notification Service
  
-Notification Service handles notification related functionality.
+Notification Service handles notification-related functionality.
  
-Responsibilities:
+**Responsibilities:**
  
 - Email Notifications
 - Leave Status Notifications
@@ -190,36 +190,28 @@ Authentication is handled by Auth Service using JWT (JSON Web Token).
  
 ### Login Flow
  
-```text
-User
-  |
-  v
-Auth Service
-  |
-  | Feign Call
-  v
-Employee Service
-  |
-  v
-EmployeeAuthResponse
-  |
-  v
-JWT Generation
-  |
-  v
-JWT Token Returned
+```mermaid
+sequenceDiagram
+    actor User
+    participant Auth as Auth Service
+    participant Emp as Employee Service
+ 
+    User->>Auth: Login Request
+    Auth->>Emp: Fetch Employee Auth Details
+    Emp-->>Auth: EmployeeAuthResponse
+    Auth->>Auth: Generate JWT Token
+    Auth-->>User: JWT Token
 ```
  
 ### Login Steps
  
 1. User sends login request.
 2. Auth Service validates credentials.
-3. Auth Service calls Employee Service using Feign Client.
-4. Employee Service returns employee details.
-5. JWT token is generated.
-6. Token is returned to the client.
+3. Auth Service calls Employee Service using OpenFeign.
+4. Employee Service returns employee authentication details.
+5. Auth Service generates JWT token with required claims.
+6. JWT token is returned to the client.
  
----
  
 ## JWT Architecture
  
