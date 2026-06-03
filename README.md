@@ -55,17 +55,11 @@ A Spring Boot Microservices based Leave Management System implementing service d
 ---
  
 ## Running Locally
- 
-### Build Images
- 
-```bash
-docker compose build --no-cache
-```
- 
+  
 ### Start Application
  
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
  
 ### Stop Application
@@ -108,12 +102,6 @@ docker compose -f docker-compose-hub.yaml down
 |-----------|------------|
 | EUREKA_CLIENT_SERVICEURL_DEFAULTZONE | Eureka Server URL |
  
-### JWT
- 
-| Variable | Description |
-|-----------|------------|
-| JWT_SECRET | Secret key used for token signing |
-| JWT_EXPIRATION | JWT token expiration duration |
  
 ### RabbitMQ
  
@@ -193,7 +181,7 @@ When employees are initialized, leave balances are automatically created.
 ### 1. Start Application
  
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
  
 ### 2. Verify Eureka Registration
@@ -218,8 +206,8 @@ Sample Request:
  
 ```json
 {
-  "username": "employee1",
-  "password": "password"
+  "email": "employee@test.com",
+  "password": "password123"
 }
 ```
  

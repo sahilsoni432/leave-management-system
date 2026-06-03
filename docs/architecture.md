@@ -11,88 +11,60 @@ All incoming requests are routed through API Gateway which acts as a centralized
 ---
  
 ## High Level Architecture
-  +----------------+
-                              |     Client     |
-                              +----------------+
-                                       |
-                                       v
-                              +----------------+
-                              |  API Gateway   |
-                              +----------------+
-                                       |
-      -----------------------------------------------------------------
-      |                       |                      |                 |
-      v                       v                      v                 v
  
-+---------------+    +----------------+    +---------------+   +----------------------+
-| Auth Service  |    | EmployeeService|    | Leave Service |   | Notification Service |
-+---------------+    +----------------+    +---------------+   +----------------------+
+```mermaid
+flowchart TD
+    Client[Client] --> Gateway[API Gateway]
  
+    Gateway --> Auth[Auth Service]
+    Gateway --> Emp[Employee Service]
+    Gateway --> Leave[Leave Service]
+    Gateway --> Notify[Notification Service]
+```
  
-                         Service Discovery (Eureka)
+### Service Discovery (Eureka)
  
-+---------------+         +----------------+         +---------------+
-| Auth Service  |-------->|                |<--------| Leave Service |
-+---------------+         |                |         +---------------+
-                          | Eureka Server  |
-+----------------+------->|                |<--------+----------------------+
-| EmployeeService|        |                |         | Notification Service |
-+----------------+        +----------------+         +----------------------+
+```mermaid
+flowchart LR
+    Auth[Auth Service] --> Eureka[Eureka Server]
+    Emp[Employee Service] --> Eureka
+    Leave[Leave Service] --> Eureka
+    Notify[Notification Service] --> Eureka
+```
  
-                                   ^
-                                   |
-                                   |
-                           +---------------+
-                           | API Gateway   |
-                           +---------------+
+### Synchronous Communication (Feign)
  
+```mermaid
+sequenceDiagram
+    Auth Service->>Employee Service: Check if user exists
+    Employee Service-->>Auth Service: Get Employee Auth Details
  
-                    Synchronous Communication (Feign)
+    Leave Service->>Employee Service: Employee Data Lookup
+    Employee Service-->>Leave Service: Employee Details
+```
  
-                     Check if user exists
-+---------------+ <--------------------------- +----------------+
-| Auth Service  | ---------------------------> | EmployeeService|
-+---------------+   Get Employee Auth Details  +----------------+
+### Asynchronous Communication (RabbitMQ)
  
+```mermaid
+flowchart LR
+    Leave[Leave Service] -->|Publish Event| MQ[RabbitMQ]
+    MQ -->|Consume Event| Notify[Notification Service]
+```
  
-+---------------+                              +----------------+
-| Leave Service | ---------------------------> | EmployeeService|
-+---------------+     Employee Data Lookup     +----------------+
+### Centralized Logging & Monitoring (ELK Stack)
  
+```mermaid
+flowchart LR
+    APIGW[API Gateway] --> FB[Filebeat]
+    AUTH[Auth Service] --> FB
+    EMP[Employee Service] --> FB
+    LEAVE[Leave Service] --> FB
+    NOTIFY[Notification Service] --> FB
  
+    FB --> ES[Elasticsearch]
+    ES --> KB[Kibana]
+```
  
-                  Asynchronous Communication (RabbitMQ)
- 
-+---------------+        Publish Event         +-------------+
-| Leave Service | ---------------------------> |  RabbitMQ   |
-+---------------+                              +-------------+
-                                                      |
-                                                      |
-                                                      | Consume Event
-                                                      v
-                                         +----------------------+
-                                         | Notification Service |
-                                         +----------------------+
-
-                  Centralized Logging & Monitoring (ELK Stack)
- 
-+------------------+      Logs      +-----------+
-| API Gateway      | -------------> |           |
-| Auth Service     | -------------> |           |
-| Employee Service | -------------> | Filebeat  |
-| Leave Service    | -------------> |           |
-| NotificationSvc  | -------------> |           |
-+------------------+                +-----------+
-                                           |
-                                           v
-                                    +-------------+
-                                    | Elasticsearch|
-                                    +-------------+
-                                           |
-                                           v
-                                      +---------+
-                                      | Kibana  |
-                                      +---------+
  
 Log Flow:
 Microservices → Filebeat → Elasticsearch → Kibana
