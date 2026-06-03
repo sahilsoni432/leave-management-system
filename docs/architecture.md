@@ -251,24 +251,15 @@ Jwts.parser()
  
 ---
  
-## Request Processing Flow
+### Request Processing Flow
  
-Every incoming request follows the flow below:
- 
-```text
-Client
-   |
-   v
-API Gateway
-   |
-   | Validate JWT
-   |
-   | Extract Claims
-   |
-   | Add Internal Headers
-   |
-   v
-Microservice
+```mermaid
+flowchart TD
+    A[Client] --> B[API Gateway]
+    B --> C[Validate JWT]
+    C --> D[Extract Claims]
+    D --> E[Add Internal Headers]
+    E --> F[Target Microservice]
 ```
  
 ### Extracted Claims
