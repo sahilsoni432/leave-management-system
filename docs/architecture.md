@@ -36,12 +36,13 @@ flowchart LR
  
 ```mermaid
 sequenceDiagram
-    Auth Service->>Employee Service: Check if user exists
-    Employee Service-->>Auth Service: Get Employee Auth Details
+    Employee Service->>Auth Service: Check if user exists
+    Auth Service-->>Employee Service: Get Employee Auth Details
  
     Leave Service->>Employee Service: Employee Data Lookup
     Employee Service-->>Leave Service: Employee Details
 ```
+ 
  
 ### Asynchronous Communication (RabbitMQ)
  
