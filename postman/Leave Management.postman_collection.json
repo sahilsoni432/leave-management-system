@@ -1,0 +1,321 @@
+{
+  "info": {
+    "_postman_id": "c0428801-8974-4cb6-992c-f9e88528f78d",
+    "name": "Leave Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19908016"
+  },
+  "item": [
+    {
+      "name": "Login Employee",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"employee@test.com\",\r\n    \"password\": \"password123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login Manager",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"manager@test.com\",\r\n    \"password\": \"password123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Employee (Non loggedin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJST0xFX0VNUExPWUVFIiwiaWF0IjoxNzc5OTk0MzgzLCJleHAiOjE3ODAwODA3ODN9.3XL2TUs5MrNFY0S3hwi5hqMGcVhkt6RFdz6znyycB7Q",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"userId\": 2,\r\n    \"name\": \"Sahil\",\r\n    \"email\": \"sahil@test.com\",\r\n    \"role\": \"ROLE_EMPLOYEE\",\r\n    \"managerId\": 1 \r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/employees/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "employees",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View Leave Balance (Employee)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJST0xFX0VNUExPWUVFIiwiZW1wbG95ZWVJZCI6MiwiaWF0IjoxNzgwNTA3MDA3LCJleHAiOjE3ODA1OTM0MDd9.LSuTSP7GNqttb4pwfEcJTCSO_aA-v5yW2EUZlqhqQ5s",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/employees/my-leave-balance",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "employees",
+            "my-leave-balance"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Apply Leave (Employee)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJST0xFX0VNUExPWUVFIiwiZW1wbG95ZWVJZCI6MiwiaWF0IjoxNzgwNTA3MDA3LCJleHAiOjE3ODA1OTM0MDd9.LSuTSP7GNqttb4pwfEcJTCSO_aA-v5yW2EUZlqhqQ5s",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"managerId\": 1,\r\n    \"leaveType\": \"SICK\",\r\n    \"startDate\": \"2026-06-22\",\r\n    \"endDate\": \"2026-06-23\",\r\n    \"numberOfDays\": 1,\r\n    \"reason\": \"Suffering from fever\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/leaves/apply",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "leaves",
+            "apply"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View Employee Leaves (Manager)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJST0xFX01BTkFHRVIiLCJlbXBsb3llZUlkIjoxLCJpYXQiOjE3ODA1MDgxMzAsImV4cCI6MTc4MDU5NDUzMH0.gSkvaVYG4eNYFJLJFDE-5Yk5D_A8iWg3198e48XmYVA",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/leaves/manager?status=ALL&employeeId=2&fromDate=2026-06-01&toDate=2026-06-30",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "leaves",
+            "manager"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "ALL"
+            },
+            {
+              "key": "employeeId",
+              "value": "2"
+            },
+            {
+              "key": "fromDate",
+              "value": "2026-06-01"
+            },
+            {
+              "key": "toDate",
+              "value": "2026-06-30"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Approve Leave (Manager)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJST0xFX01BTkFHRVIiLCJlbXBsb3llZUlkIjoxLCJpYXQiOjE3ODA1MDgxMzAsImV4cCI6MTc4MDU5NDUzMH0.gSkvaVYG4eNYFJLJFDE-5Yk5D_A8iWg3198e48XmYVA",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/leaves/1/approve",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "leaves",
+            "1",
+            "approve"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reject Leave (Manager)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJST0xFX01BTkFHRVIiLCJlbXBsb3llZUlkIjoxLCJpYXQiOjE3ODA1MDgxMzAsImV4cCI6MTc4MDU5NDUzMH0.gSkvaVYG4eNYFJLJFDE-5Yk5D_A8iWg3198e48XmYVA",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/leaves/2/reject?reason=Insufficient",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "leaves",
+            "2",
+            "reject"
+          ],
+          "query": [
+            {
+              "key": "reason",
+              "value": "Insufficient"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View Leave History (Employee)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJST0xFX0VNUExPWUVFIiwiZW1wbG95ZWVJZCI6MiwiaWF0IjoxNzgwNTA3MDA3LCJleHAiOjE3ODA1OTM0MDd9.LSuTSP7GNqttb4pwfEcJTCSO_aA-v5yW2EUZlqhqQ5s",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/leaves/my-leave-history?status=ALL&leaveType=ALL&fromDate=2026-06-01&toDate=2026-06-30&page=0&size=10",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "leaves",
+            "my-leave-history"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "ALL"
+            },
+            {
+              "key": "leaveType",
+              "value": "ALL"
+            },
+            {
+              "key": "fromDate",
+              "value": "2026-06-01"
+            },
+            {
+              "key": "toDate",
+              "value": "2026-06-30"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
