@@ -67,21 +67,22 @@ flowchart LR
 ```
  
  
-Log Flow:
+### Log Flow:
 Microservices → Filebeat → Elasticsearch → Kibana
  
-Events Published:
+
+### Events Published:
 - Leave Applied
 - Leave Approved
 - Leave Rejected
-```
+
  
-> **Architecture Summary**
->
-> - All microservices register themselves with Eureka Server.
-> - API Gateway routes requests using service discovery.
-> - Employee Service is invoked by Auth Service and Leave Service using OpenFeign.
-> - Notification events are published to RabbitMQ and consumed asynchronously by Notification Service.
+### Architecture Summary
+
+- All microservices register themselves with Eureka Server.
+- API Gateway routes requests using service discovery.
+- Employee Service is invoked by Auth Service and Leave Service using OpenFeign.
+- Notification events are published to RabbitMQ and consumed asynchronously by Notification Service.
  
 ## System Components
  
