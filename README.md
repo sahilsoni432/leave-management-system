@@ -291,7 +291,7 @@ Password: guest
 The complete Postman collection is included in the repository.
  
 ```text
-postman/LeaveManagement.postman_collection.json
+postman/Leave Management.postman_collection.json
 ```
  
 The collection contains:
