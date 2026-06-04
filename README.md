@@ -328,7 +328,7 @@ sahilsoni234/eurekaserver
 Demo Recording Link:
  
 ```text
-PASTE_YOUR_VIDEO_LINK_HERE
+The demo recording is included in the final submission package as : LeaveManagementSystem_Demo.mp4
 ```
  
 ---
